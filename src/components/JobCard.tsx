@@ -8,12 +8,14 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import getSymbolFromCurrency from "currency-symbol-map";
 import { Zap } from "lucide-react";
 import Card from "@mui/material/Card";
 import { useState } from "react";
-function JobCard() {
+import { Job } from "./JobsGrid";
+function JobCard({ job }: { job: Job }) {
   const [hovered, setHovered] = useState(false);
-
+  const currencySymbol = getSymbolFromCurrency(job.salaryCurrencyCode);
   const handleMouseEnter = () => {
     setHovered(true);
   };
@@ -26,11 +28,11 @@ function JobCard() {
       variant="outlined"
       style={{
         maxWidth: 350,
-        height: "100%",
+        height: 580,
         borderRadius: 10,
         transition: "transform 0.3s",
         transform: hovered ? "scale(1.02)" : "",
-        padding: 1,
+        padding: 5,
       }}
       sx={{ boxShadow: 2 }}
       onMouseEnter={handleMouseEnter}
@@ -55,19 +57,43 @@ function JobCard() {
         style={{ fontSize: 8, marginLeft: 16, marginTop: 10 }}
       />
       <CardHeader
-        avatar={<Avatar variant="square"></Avatar>}
+        avatar={<Avatar variant="square" src={job.logoUrl}></Avatar>}
         title={
-          <Typography variant="subtitle1" color="GrayText" fontSize={16}>
-            Firefly
+          <Typography
+            fontSize={16}
+            sx={{
+              ":hover": { textDecoration: "underline" },
+              cursor: "pointer",
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              color="GrayText"
+              component={"a"}
+              href={job.jdLink}
+              style={{ textDecoration: "none" }}
+            >
+              {job.companyName}
+            </Typography>
           </Typography>
         }
         subheader={
           <Box>
-            <Typography variant="h6" color={"InfoText"} fontSize={16}>
-              Frontend Engineer
+            <Typography
+              variant="h6"
+              color={"InfoText"}
+              fontSize={16}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {job.jobRole}
             </Typography>
-            <Typography variant="subtitle2" color={"CaptionText"} fontSize={12}>
-              India
+            <Typography
+              variant="subtitle2"
+              color={"CaptionText"}
+              fontSize={12}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {job.location}
             </Typography>
           </Box>
         }
@@ -78,10 +104,10 @@ function JobCard() {
         paddingX={"16px"}
         fontSize={16}
       >
-        Estimated Salary : ₹ 18 - 20 LPA
+        {`Estimated Salary : ${currencySymbol}${job.maxJdSalary}k - ${currencySymbol}${job.minJdSalary}k ${job.salaryCurrencyCode}`}
       </Typography>
       <CardContent
-        style={{ display: "flex", flexDirection: "column", rowGap: 20 }}
+        style={{ display: "flex", flexDirection: "column", rowGap: 10 }}
       >
         <div
           style={{
@@ -92,7 +118,7 @@ function JobCard() {
             style={{
               display: "flex",
               flexDirection: "column",
-              rowGap: 10,
+              rowGap: 6,
               position: "relative",
             }}
             className="blurEffect"
@@ -113,13 +139,12 @@ function JobCard() {
             >
               About Us
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Firefly is a Cloud Asset Management solution that enables DevOps,
-              SRE, and Cloud Platform teams to rediscover their entire cloud
-              footprint, understand which parts of it are codified vs unmanaged,
-              detect drifts to prevent service failures, classify assets using
-              Policy-as-Code, and manage a single inventory of all their cloud
-              resources across Multi-Cloud, and Kubernetes clusters.
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ height: 150, overflow: "hidden", fontSize: 13 }}
+            >
+              {job.jobDetailsFromCompany}
             </Typography>
             <Typography
               variant="body1"
@@ -170,7 +195,7 @@ function JobCard() {
             fontSize={14}
             fontWeight={400}
           >
-            4 years
+            {job.minExp} years
           </Typography>
         </Box>
         <CardActions>
@@ -190,7 +215,6 @@ function JobCard() {
                 color: "black",
                 textTransform: "capitalize",
                 width: "100%",
-                paddingY: 1.5,
                 boxShadow: 0,
               }}
             >
@@ -214,7 +238,6 @@ function JobCard() {
                 color: "white",
                 textTransform: "capitalize",
                 width: "100%",
-                paddingY: 1.5,
                 boxShadow: 0,
               }}
             >
@@ -223,9 +246,21 @@ function JobCard() {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                  columnGap: 2,
+                  columnGap: 1,
                 }}
               >
+                <Avatar
+                  variant="circular"
+                  src={job.logoUrl}
+                  sx={{ height: 20, width: 20 }}
+                  className="bg-blur"
+                ></Avatar>
+                <Avatar
+                  variant="circular"
+                  src={job.logoUrl}
+                  sx={{ height: 20, width: 20 }}
+                  className="bg-blur"
+                ></Avatar>
                 <Typography sx={{ textWrap: "nowrap" }}>
                   Unlock referral asks
                 </Typography>
