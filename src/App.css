@@ -29,7 +29,7 @@ body {
   height: 100%;
   display: grid;
   grid-gap: 40px;
-  place-items: center; /* Aligns grid items both horizontally and vertically */
+  place-items: center;
   background-color: white;
 }
 
@@ -70,6 +70,7 @@ body {
 .auto-complete {
   width: 100%;
 }
+
 
 
 .end{

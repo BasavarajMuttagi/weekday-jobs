@@ -64,6 +64,12 @@ function SideBar() {
                 sx={{ color: "gray", position: "relative" }}
               />
               <Badge
+                sx={{
+                  "& .MuiBadge-badge": {
+                    color: "white",
+                    backgroundColor: "#2ae8b4",
+                  },
+                }}
                 badgeContent={"New"}
                 color="primary"
                 className="breathe"

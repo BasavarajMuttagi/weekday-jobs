@@ -1,19 +1,17 @@
 import "./App.css";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes/routes";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-const queryClient = new QueryClient();
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+const persistor = persistStore(store);
 function App() {
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+      <PersistGate loading={null} persistor={persistor}>
         <RouterProvider router={routes} />
-        <ReactQueryDevtools />
-      </QueryClientProvider>
+      </PersistGate>
     </Provider>
   );
 }

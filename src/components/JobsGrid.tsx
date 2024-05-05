@@ -1,43 +1,49 @@
-import { useQuery } from "@tanstack/react-query";
 import JobCard from "./JobCard";
 import axios from "axios";
-import Loading from "./Loading";
 import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setNewJobs } from "../redux/slices/jobs";
 
 function JobsGrid() {
-  const getAllJobs = async () => {
-    const body = {
-      limit: 10,
-      offset: 0,
-    };
-    const result = await axios.post(
-      "https://api.weekday.technology/adhoc/getSampleJdJSON",
-      body,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  const itemsPerPage = 10;
+  const [currentPage] = useState(1);
+  const dispatch = useDispatch();
 
-    return result.data as JobListResponse;
+  const storedJobs = useSelector((state: RootState) => state.jobs);
+
+  const [jobs] = useState<JobListResponse>(storedJobs);
+
+  const getAllJobs = async (currrentPage: number) => {
+    const offset = (currrentPage - 1) * itemsPerPage;
+    const body = {
+      limit: itemsPerPage,
+      offset,
+    };
+    try {
+      const result = await axios.post(
+        "https://api.weekday.technology/adhoc/getSampleJdJSON",
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = result.data as JobListResponse;
+      dispatch(setNewJobs(data));
+    } catch (error) {}
   };
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["getalljobs"],
-    queryFn: async () => getAllJobs(),
-  });
+  useEffect(() => {
+    getAllJobs(currentPage);
+  }, [currentPage]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (isError) {
-    return <span>Error: {error.message}</span>;
-  }
   return (
     <div className="jobGrid">
-      {data?.jdList.map((eachJob) => (
+      {jobs?.jdList.map((eachJob) => (
         <JobCard job={eachJob} key={eachJob.jdUid} />
       ))}
       <Typography
@@ -69,7 +75,7 @@ export type Job = {
   logoUrl: string;
 };
 
-type JobListResponse = {
+export type JobListResponse = {
   jdList: Job[];
   totalCount: number;
 };
