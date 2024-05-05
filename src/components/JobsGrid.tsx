@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import JobCard from "./JobCard";
 import axios from "axios";
 import Loading from "./Loading";
+import { Typography } from "@mui/material";
+
 function JobsGrid() {
   const getAllJobs = async () => {
     const body = {
@@ -38,6 +40,14 @@ function JobsGrid() {
       {data?.jdList.map((eachJob) => (
         <JobCard job={eachJob} key={eachJob.jdUid} />
       ))}
+      <Typography
+        className="end"
+        fontSize={12}
+        variant="subtitle1"
+        color="GrayText"
+      >
+        You've reached the end!
+      </Typography>
     </div>
   );
 }
