@@ -6,23 +6,14 @@ import {
   CardContent,
   CardHeader,
   Chip,
+  Skeleton,
   Typography,
 } from "@mui/material";
-import getSymbolFromCurrency from "currency-symbol-map";
+
 import { Zap } from "lucide-react";
 import Card from "@mui/material/Card";
-import { useState } from "react";
-import { Job } from "./JobsGrid";
-function JobCard({ job }: { job: Job }) {
-  const [hovered, setHovered] = useState(false);
-  const currencySymbol = getSymbolFromCurrency(job.salaryCurrencyCode);
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
 
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
+function JobCardSK() {
   return (
     <Card
       variant="outlined"
@@ -30,13 +21,9 @@ function JobCard({ job }: { job: Job }) {
         maxWidth: 350,
         height: 580,
         borderRadius: 10,
-        transition: "transform 0.3s",
-        transform: hovered ? "scale(1.02)" : "",
         padding: 5,
       }}
       sx={{ boxShadow: 2 }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       <Chip
         label={
@@ -57,7 +44,7 @@ function JobCard({ job }: { job: Job }) {
         style={{ fontSize: 8, marginLeft: 16, marginTop: 10 }}
       />
       <CardHeader
-        avatar={<Avatar variant="square" src={job.logoUrl}></Avatar>}
+        avatar={<Avatar variant="square"></Avatar>}
         title={
           <Typography
             fontSize={16}
@@ -70,10 +57,9 @@ function JobCard({ job }: { job: Job }) {
               variant="subtitle1"
               color="GrayText"
               component={"a"}
-              href={job.jdLink}
               style={{ textDecoration: "none" }}
             >
-              {job.companyName}
+              <Skeleton />
             </Typography>
           </Typography>
         }
@@ -85,7 +71,7 @@ function JobCard({ job }: { job: Job }) {
               fontSize={16}
               sx={{ textTransform: "capitalize" }}
             >
-              {job.jobRole}
+              <Skeleton />
             </Typography>
             <Typography
               variant="subtitle2"
@@ -93,7 +79,7 @@ function JobCard({ job }: { job: Job }) {
               fontSize={12}
               sx={{ textTransform: "capitalize" }}
             >
-              {job.location}
+              <Skeleton />
             </Typography>
           </Box>
         }
@@ -104,7 +90,7 @@ function JobCard({ job }: { job: Job }) {
         paddingX={"16px"}
         fontSize={16}
       >
-        {`Estimated Salary : ${currencySymbol}${job.maxJdSalary}k - ${currencySymbol}${job.minJdSalary}k ${job.salaryCurrencyCode}`}
+        <Skeleton />
       </Typography>
       <CardContent
         style={{ display: "flex", flexDirection: "column", rowGap: 10 }}
@@ -144,7 +130,7 @@ function JobCard({ job }: { job: Job }) {
               color="text.secondary"
               sx={{ height: 150, overflow: "hidden", fontSize: 13 }}
             >
-              {job.jobDetailsFromCompany}
+              <Skeleton />
             </Typography>
             <Typography
               variant="body1"
@@ -195,7 +181,7 @@ function JobCard({ job }: { job: Job }) {
             fontSize={14}
             fontWeight={400}
           >
-            {job.minExp} years
+            <Skeleton /> years
           </Typography>
         </Box>
         <CardActions>
@@ -271,4 +257,4 @@ function JobCard({ job }: { job: Job }) {
   );
 }
 
-export default JobCard;
+export default JobCardSK;

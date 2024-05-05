@@ -1,14 +1,16 @@
 import JobCard from "./JobCard";
 import axios from "axios";
-import { Box, CircularProgress } from "@mui/material";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useContext, useEffect, useMemo, useState } from "react";
+import JobCardSK from "./JobCardSK";
+import { TotalRecordsContext } from "../Layouts/HomePageLayout";
 
 function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
+  const data = useContext(TotalRecordsContext);
+  const setValue = data[1];
   const [isloading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [updatedJobs, setUpdatedJobs] = useState<Job[]>([]);
-  const [, setJobsResponse] = useState<JobListResponse>();
 
   const getAllJobs = async (nextPage: number) => {
     setIsLoading(true);
@@ -29,8 +31,8 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
       );
 
       const data = result.data as JobListResponse;
-      setJobsResponse(data);
       setUpdatedJobs([...updatedJobs, ...data.jdList]);
+      setValue(data.totalCount);
     } catch (error) {
       console.log(error);
     } finally {
@@ -40,7 +42,6 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   useEffect(() => {
     getAllJobs(currentPage);
-    console.log(currentPage);
   }, [currentPage]);
 
   useEffect(() => {
@@ -51,9 +52,8 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         (scrollPosition! /
           (contentRef.current?.scrollHeight! - viewportHeight!)) *
         100;
-      if (scrollPercentage > 95) {
+      if (scrollPercentage > 90 && isloading == false) {
         const nextPage = currentPage + 1;
-        console.log(currentPage, nextPage);
         setCurrentPage(nextPage);
       }
     };
@@ -64,22 +64,26 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     return () => {
       contentRef.current?.removeEventListener("scroll", handleScroll);
     };
-  }, [currentPage]);
+  }, [updatedJobs, currentPage]);
+
+  const memoizedJobs = useMemo(() => updatedJobs, [updatedJobs]);
 
   return (
     <div className="jobGrid">
-      {updatedJobs.map((eachJob) => (
+      {memoizedJobs.map((eachJob) => (
         <JobCard job={eachJob} key={eachJob.jdUid} />
       ))}
+
       {isloading && (
-        <Box
-          sx={{ display: "flex", justifyContent: "center" }}
-          component={"div"}
-          className="end"
-        >
-          <CircularProgress />
-        </Box>
+        <>
+          <JobCardSK />
+          <JobCardSK />
+          <JobCardSK />
+          <JobCardSK />
+          <JobCardSK />
+        </>
       )}
+
       {/* <Typography
         className="end"
         fontSize={12}

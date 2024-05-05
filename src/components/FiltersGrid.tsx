@@ -1,13 +1,11 @@
 import { Badge, Typography } from "@mui/material";
 import MultipleSelectChip from "./Fliter";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { JobListResponse } from "./JobsGrid";
+import { useContext } from "react";
+import { TotalRecordsContext } from "../Layouts/HomePageLayout";
 
 function FilterGrid() {
-  const storedJobs = useSelector((state: RootState) => state.jobs);
-  const [jobs] = useState<JobListResponse>(storedJobs);
+  const data = useContext(TotalRecordsContext);
+  const value = data[0];
 
   return (
     <div>
@@ -19,7 +17,7 @@ function FilterGrid() {
         }}
         component={"div"}
       >
-        <Badge badgeContent={jobs.totalCount} color="primary" max={9000}>
+        <Badge badgeContent={value} color="primary" max={9000}>
           <Typography
             sx={{
               textDecoration: "1px solid underline",
