@@ -1,22 +1,18 @@
 import JobCard from "./JobCard";
 import axios from "axios";
-import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { setNewJobs } from "../redux/slices/jobs";
+import { Box, CircularProgress } from "@mui/material";
+import { RefObject, useEffect, useState } from "react";
 
-function JobsGrid() {
+function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
+  const [isloading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
-  const [currentPage] = useState(1);
-  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [updatedJobs, setUpdatedJobs] = useState<Job[]>([]);
+  const [, setJobsResponse] = useState<JobListResponse>();
 
-  const storedJobs = useSelector((state: RootState) => state.jobs);
-
-  const [jobs] = useState<JobListResponse>(storedJobs);
-
-  const getAllJobs = async (currrentPage: number) => {
-    const offset = (currrentPage - 1) * itemsPerPage;
+  const getAllJobs = async (nextPage: number) => {
+    setIsLoading(true);
+    const offset = (nextPage - 1) * itemsPerPage;
     const body = {
       limit: itemsPerPage,
       offset,
@@ -33,27 +29,65 @@ function JobsGrid() {
       );
 
       const data = result.data as JobListResponse;
-      dispatch(setNewJobs(data));
-    } catch (error) {}
+      setJobsResponse(data);
+      setUpdatedJobs([...updatedJobs, ...data.jdList]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     getAllJobs(currentPage);
+    console.log(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const viewportHeight = contentRef.current?.clientHeight;
+      const scrollPosition = contentRef.current?.scrollTop;
+      const scrollPercentage =
+        (scrollPosition! /
+          (contentRef.current?.scrollHeight! - viewportHeight!)) *
+        100;
+      if (scrollPercentage > 95) {
+        const nextPage = currentPage + 1;
+        console.log(currentPage, nextPage);
+        setCurrentPage(nextPage);
+      }
+    };
+    if (contentRef && contentRef.current) {
+      contentRef.current?.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      contentRef.current?.removeEventListener("scroll", handleScroll);
+    };
   }, [currentPage]);
 
   return (
     <div className="jobGrid">
-      {jobs?.jdList.map((eachJob) => (
+      {updatedJobs.map((eachJob) => (
         <JobCard job={eachJob} key={eachJob.jdUid} />
       ))}
-      <Typography
+      {isloading && (
+        <Box
+          sx={{ display: "flex", justifyContent: "center" }}
+          component={"div"}
+          className="end"
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      {/* <Typography
         className="end"
         fontSize={12}
         variant="subtitle1"
         color="GrayText"
       >
         You've reached the end!
-      </Typography>
+      </Typography> */}
     </div>
   );
 }
