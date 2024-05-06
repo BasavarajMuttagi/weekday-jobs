@@ -88,6 +88,11 @@
     scrollbar-width: none;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+
+  
   @keyframes breathe {
     0% {
       opacity: 0.4;
