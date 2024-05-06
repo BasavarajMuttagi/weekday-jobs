@@ -22,7 +22,7 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [updatedJobs, setUpdatedJobs] = useState<Job[]>([]);
-
+  const [lastPage, setLastPage] = useState(-1);
   const getAllJobs = async (nextPage: number) => {
     setIsLoading(true);
     const offset = (nextPage - 1) * itemsPerPage;
@@ -44,6 +44,7 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
       const data = result.data as JobListResponse;
       setUpdatedJobs([...updatedJobs, ...data.jdList]);
       setValue(data.totalCount);
+      setLastPage(Math.ceil(data.totalCount / itemsPerPage));
     } catch (error) {
       console.log(error);
     } finally {
@@ -63,7 +64,12 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         (scrollPosition! /
           (contentRef.current?.scrollHeight! - viewportHeight!)) *
         100;
-      if (scrollPercentage > 90 && isloading == false) {
+
+      if (
+        scrollPercentage > 90 &&
+        isloading == false &&
+        currentPage !== lastPage
+      ) {
         const nextPage = currentPage + 1;
         setCurrentPage(nextPage);
       }
@@ -134,9 +140,7 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   return (
     <>
-      <div style={{ marginLeft:"20px" }}>
-        results {filteredJobs.length}
-      </div>
+      <div style={{ marginLeft: "20px" }}>results {filteredJobs.length}</div>
       <div className="jobGrid">
         {filteredJobs.map((eachJob) => (
           <JobCard job={eachJob} key={eachJob.jdUid} />
@@ -150,6 +154,16 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
             <JobCardSK />
             <JobCardSK />
           </>
+        )}
+        {currentPage == lastPage && (
+          <Typography
+            className="end"
+            fontSize={20}
+            variant="caption"
+            color="black"
+          >
+            You Have Reached The End!
+          </Typography>
         )}
       </div>
       {filteredJobs.length == 0 && (
