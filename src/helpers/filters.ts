@@ -1,3 +1,13 @@
+import {
+  setRoles,
+  setMinExp,
+  setMinSalary,
+  setLocationType,
+  setSearchTerm,
+} from "../redux/slices/jobs";
+import { AppDispatch, RootState } from "../redux/store";
+import { useAppSelector } from "../redux/hooks";
+import { titles } from "./types";
 const Roles = [
   "Backend",
   "Frontend",
@@ -30,3 +40,50 @@ const LOCATION_TYPE = ["Remote", "Hybrid", "In-Office"].map((location) => ({
 }));
 
 export { Roles, MIN_EXPERIENCE, MIN_SALARY, LOCATION_TYPE };
+
+export const dispatchHelper = (
+  title: titles,
+  newValue: any,
+  dispatch: AppDispatch
+) => {
+  switch (title) {
+    case "Roles":
+      dispatch(setRoles(newValue));
+      break;
+    case "Experience":
+      dispatch(setMinExp(newValue));
+      break;
+    case "Minimum Base Pay Salary":
+      dispatch(setMinSalary(newValue));
+      break;
+    case "Location":
+      dispatch(setLocationType(newValue));
+      break;
+    case "Search":
+      dispatch(setSearchTerm(newValue));
+      break;
+    default:
+      break;
+  }
+};
+
+export const getValue = (title: string) => {
+  switch (title) {
+    case "Roles":
+      return useAppSelector((state: RootState) => state.filters.selectedRoles);
+    case "Experience":
+      return useAppSelector((state: RootState) => state.filters.selectedMinExp);
+    case "Minimum Base Pay Salary":
+      return useAppSelector(
+        (state: RootState) => state.filters.selectedMinSalary
+      );
+    case "Location":
+      return useAppSelector(
+        (state: RootState) => state.filters.selectedLocationType
+      );
+    case "Search":
+      return useAppSelector((state: RootState) => state.filters.searchedTerm);
+    default:
+      return "";
+  }
+};

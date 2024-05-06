@@ -11,6 +11,7 @@ const initialState = {
     value: number;
   },
   selectedLocationType: [] as { label: string; value: string }[],
+  searchedTerm: "",
 };
 export const filterSlice = createSlice({
   name: "filters",
@@ -28,9 +29,17 @@ export const filterSlice = createSlice({
     setLocationType: (state, action) => {
       state.selectedLocationType = action.payload;
     },
+    setSearchTerm: (state, action) => {
+      state.searchedTerm = action.payload;
+    },
   },
 });
 
-export const { setRoles, setMinExp, setMinSalary, setLocationType } =
-  filterSlice.actions;
+export const {
+  setRoles,
+  setMinExp,
+  setMinSalary,
+  setLocationType,
+  setSearchTerm,
+} = filterSlice.actions;
 export default filterSlice.reducer;

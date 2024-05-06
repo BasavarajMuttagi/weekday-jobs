@@ -9,18 +9,13 @@ import { Box, Typography } from "@mui/material";
 import { Job, JobListResponse } from "../helpers/types";
 
 function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
-  const selectedRoles = useAppSelector(
-    (state: RootState) => state.filters.selectedRoles
-  );
-  const selectedMinExp = useAppSelector(
-    (state: RootState) => state.filters.selectedMinExp
-  );
-  const selectedMinSalary = useAppSelector(
-    (state: RootState) => state.filters.selectedMinSalary
-  );
-  const selectedLocationType = useAppSelector(
-    (state: RootState) => state.filters.selectedLocationType
-  );
+  const {
+    selectedRoles,
+    selectedMinExp,
+    selectedMinSalary,
+    selectedLocationType,
+    searchedTerm,
+  } = useAppSelector((state: RootState) => state.filters);
   const data = useContext(TotalRecordsContext);
   const setValue = data[1];
   const [isloading, setIsLoading] = useState(false);
@@ -88,6 +83,11 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         return Object.values(job).every((value) => value !== null);
       })
       .filter((job) => {
+        // Filter by search term
+        const searchTermFilter =
+          !searchedTerm ||
+          job.companyName.toLowerCase().includes(searchedTerm.toLowerCase());
+
         // Filter by role
         const roleFilter =
           selectedRoles.length === 0 ||
@@ -116,7 +116,11 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           );
 
         return (
-          roleFilter && minExpFilter && minSalaryFilter && locationTypeFilter
+          searchTermFilter &&
+          roleFilter &&
+          minExpFilter &&
+          minSalaryFilter &&
+          locationTypeFilter
         );
       });
   }, [
@@ -125,10 +129,14 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     selectedMinExp,
     selectedMinSalary,
     selectedLocationType,
+    searchedTerm,
   ]);
 
   return (
     <>
+      <div style={{ marginLeft:"20px" }}>
+        results {filteredJobs.length}
+      </div>
       <div className="jobGrid">
         {filteredJobs.map((eachJob) => (
           <JobCard job={eachJob} key={eachJob.jdUid} />
@@ -148,7 +156,7 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         <Box
           sx={{
             display: "flex",
-            flexDirection:"column",
+            flexDirection: "column",
             alignItems: "center",
             height: "100%",
           }}
@@ -163,5 +171,3 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 }
 
 export default JobsGrid;
-
-

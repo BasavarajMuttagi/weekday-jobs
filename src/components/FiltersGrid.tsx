@@ -2,7 +2,12 @@ import { Badge, Typography } from "@mui/material";
 import MultipleSelectChip from "./Fliter";
 import { useContext } from "react";
 import { TotalRecordsContext } from "../Layouts/HomePageLayout";
-import { LOCATION_TYPE, MIN_EXPERIENCE, MIN_SALARY, Roles } from "../helpers/filters";
+import {
+  LOCATION_TYPE,
+  MIN_EXPERIENCE,
+  MIN_SALARY,
+  Roles,
+} from "../helpers/filters";
 
 function FilterGrid() {
   const data = useContext(TotalRecordsContext);
@@ -34,10 +39,22 @@ function FilterGrid() {
       </Typography>
 
       <div className="filtergriditems">
-        <MultipleSelectChip title="Roles" optionsArray={Roles} isMultiSelect={true} />
+        <MultipleSelectChip
+          title="Roles"
+          optionsArray={Roles}
+          isMultiSelect={true}
+        />
         <MultipleSelectChip title="Experience" optionsArray={MIN_EXPERIENCE} />
-        <MultipleSelectChip title="Location" optionsArray={LOCATION_TYPE} isMultiSelect={true}/>
-        <MultipleSelectChip title="Minimum Base Pay Salary" optionsArray={MIN_SALARY} />
+        <MultipleSelectChip
+          title="Location"
+          optionsArray={LOCATION_TYPE}
+          isMultiSelect={true}
+        />
+        <MultipleSelectChip
+          title="Minimum Base Pay Salary"
+          optionsArray={MIN_SALARY}
+        />
+        <MultipleSelectChip title="Search" isFreeSolo={true} optionsArray={[]} />
       </div>
     </div>
   );
