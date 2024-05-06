@@ -12,7 +12,8 @@ import getSymbolFromCurrency from "currency-symbol-map";
 import { Zap } from "lucide-react";
 import Card from "@mui/material/Card";
 import { useState } from "react";
-import { Job } from "./JobsGrid";
+import { Job } from "../helpers/types";
+
 function JobCard({ job }: { job: Job }) {
   const [hovered, setHovered] = useState(false);
   const currencySymbol = getSymbolFromCurrency(job.salaryCurrencyCode);
@@ -104,7 +105,7 @@ function JobCard({ job }: { job: Job }) {
         paddingX={"16px"}
         fontSize={16}
       >
-        {`Estimated Salary : ${currencySymbol}${job.maxJdSalary}k - ${currencySymbol}${job.minJdSalary}k ${job.salaryCurrencyCode}`}
+        {`Estimated Salary : ${currencySymbol}${job.minJdSalary}k - ${currencySymbol}${job.maxJdSalary}k ${job.salaryCurrencyCode}`}
       </Typography>
       <CardContent
         style={{ display: "flex", flexDirection: "column", rowGap: 10 }}

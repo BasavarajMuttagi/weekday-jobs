@@ -130,7 +130,13 @@ function JobCardSK() {
               color="text.secondary"
               sx={{ height: 150, overflow: "hidden", fontSize: 13 }}
             >
-              <Skeleton />
+              This is a sample job and you must have displayed it to understand
+              that its not just some random lorem ipsum text but something which
+              was manually written. Oh well, if random text is what you were
+              looking for then here it is: Lorem Ipsum is simply dummy text of
+              the printing and typesetting industry. Lorem Ipsum has been the
+              industry's standard dummy text ever since the 1500s, when an
+              unknown
             </Typography>
             <Typography
               variant="body1"

@@ -3,8 +3,24 @@ import axios from "axios";
 import { RefObject, useContext, useEffect, useMemo, useState } from "react";
 import JobCardSK from "./JobCardSK";
 import { TotalRecordsContext } from "../Layouts/HomePageLayout";
+import { RootState } from "../redux/store";
+import { useAppSelector } from "../redux/hooks";
+import { Box, Typography } from "@mui/material";
+import { Job, JobListResponse } from "../helpers/types";
 
 function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
+  const selectedRoles = useAppSelector(
+    (state: RootState) => state.filters.selectedRoles
+  );
+  const selectedMinExp = useAppSelector(
+    (state: RootState) => state.filters.selectedMinExp
+  );
+  const selectedMinSalary = useAppSelector(
+    (state: RootState) => state.filters.selectedMinSalary
+  );
+  const selectedLocationType = useAppSelector(
+    (state: RootState) => state.filters.selectedLocationType
+  );
   const data = useContext(TotalRecordsContext);
   const setValue = data[1];
   const [isloading, setIsLoading] = useState(false);
@@ -66,54 +82,86 @@ function JobsGrid({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     };
   }, [updatedJobs, currentPage]);
 
-  const memoizedJobs = useMemo(() => updatedJobs, [updatedJobs]);
+  const filteredJobs = useMemo(() => {
+    return updatedJobs
+      .filter((job) => {
+        return Object.values(job).every((value) => value !== null);
+      })
+      .filter((job) => {
+        // Filter by role
+        const roleFilter =
+          selectedRoles.length === 0 ||
+          selectedRoles.some(
+            (role) => role.value.toLowerCase() === job.jobRole.toLowerCase()
+          );
+
+        // Filter by minimum experience
+        const minExpFilter =
+          !selectedMinExp ||
+          job.minExp === null ||
+          job.minExp >= selectedMinExp.value;
+
+        // Filter by minimum salary
+        const minSalaryFilter =
+          !selectedMinSalary ||
+          job.minJdSalary === null ||
+          job.minJdSalary >= selectedMinSalary.value;
+
+        // Filter by location type
+        const locationTypeFilter =
+          selectedLocationType.length === 0 ||
+          selectedLocationType.some(
+            (location) =>
+              location.value.toLowerCase() === job.location.toLowerCase()
+          );
+
+        return (
+          roleFilter && minExpFilter && minSalaryFilter && locationTypeFilter
+        );
+      });
+  }, [
+    updatedJobs,
+    selectedRoles,
+    selectedMinExp,
+    selectedMinSalary,
+    selectedLocationType,
+  ]);
 
   return (
-    <div className="jobGrid">
-      {memoizedJobs.map((eachJob) => (
-        <JobCard job={eachJob} key={eachJob.jdUid} />
-      ))}
+    <>
+      <div className="jobGrid">
+        {filteredJobs.map((eachJob) => (
+          <JobCard job={eachJob} key={eachJob.jdUid} />
+        ))}
 
-      {isloading && (
-        <>
-          <JobCardSK />
-          <JobCardSK />
-          <JobCardSK />
-          <JobCardSK />
-          <JobCardSK />
-        </>
+        {isloading && (
+          <>
+            <JobCardSK />
+            <JobCardSK />
+            <JobCardSK />
+            <JobCardSK />
+            <JobCardSK />
+          </>
+        )}
+      </div>
+      {filteredJobs.length == 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Typography className="end" fontSize={20} variant="h5" color="black">
+            No Jobs available for this category at the moment
+          </Typography>
+        </Box>
       )}
-
-      {/* <Typography
-        className="end"
-        fontSize={12}
-        variant="subtitle1"
-        color="GrayText"
-      >
-        You've reached the end!
-      </Typography> */}
-    </div>
+    </>
   );
 }
 
 export default JobsGrid;
 
-export type Job = {
-  jdUid: string;
-  jdLink: string;
-  jobDetailsFromCompany: string;
-  maxJdSalary: number;
-  minJdSalary: number | null;
-  salaryCurrencyCode: string;
-  location: string;
-  minExp: number | null;
-  maxExp: number | null;
-  jobRole: string;
-  companyName: string;
-  logoUrl: string;
-};
 
-export type JobListResponse = {
-  jdList: Job[];
-  totalCount: number;
-};

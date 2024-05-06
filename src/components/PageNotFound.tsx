@@ -1,11 +1,10 @@
-import { LoaderCircle } from "lucide-react";
-function Loading() {
+function PageNotFound() {
   return (
     <div
       style={{
         width: "100%",
         height: "100vh",
-        backgroundColor: "violet",
+        backgroundColor: "black",
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
@@ -13,12 +12,12 @@ function Loading() {
         fontSize: "35px",
         color: "white",
         columnGap: 20,
+        fontWeight:"bold"
       }}
     >
-      <span>Loading</span>
-      <LoaderCircle size={50} className="spinner" />
+      <span>Page Not Found</span>
     </div>
   );
 }
 
-export default Loading;
+export default PageNotFound;

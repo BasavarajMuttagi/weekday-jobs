@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import jobSlice from "./slices/jobs";
+
 import {
   persistReducer,
   FLUSH,
@@ -9,15 +9,16 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import storageSession from "redux-persist/lib/storage/session";
+import filterSlice from "./slices/jobs";
 
 const persistConfig = {
   key: "root",
-  storage,
+  storage: storageSession,
 };
 
 const reducers = combineReducers({
-  jobs: jobSlice,
+  filters: filterSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);
